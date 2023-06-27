@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inventario</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <h1>Inventario</h1>
+  <div id="menu">
+    <label for="opcion">Seleccione una opción:</label>
+    <div class="menu-wrapper"></div>
+    <select id="opcion">
+      <option value="1">Agregar producto</option>
+      <option value="2">Editar producto</option>
+      <option value="3">Dar salida a producto</option>
+      <option value="4">Eliminar producto</option>
+      <option value="5">Dar entrada a producto</option>
+      <option value="6">Buscar producto por nombre</option>
+      <option value="7">Mostrar inventario completo</option>
+      <option value="8">Imprimir tabla</option>
+      <option value="9">Generar PDF</option>
+      <option value="10">Limpiar Inventario</option>
+    </select>
+    <button onclick="ejecutarOpcion()">Ejecutar</button>
+  </div>
+  <div id="results"></div>
+
+  <table id="inventory-table" class="print-table">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Precio Costo</th>
+        <th>Entradas</th>
+        <th>Salidas</th>
+        <th>Cantidad</th>
+        <th>Costo Total</th>
+      </tr>
+    </thead>
+    <tbody id="inventory-body" ></tbody>
+  </table>
+
+  <div class="costs-container">
+  <table id="global-table" class="global-table" class="small-table">
+    <thead>
+      <tr>
+        <th>Precio Costo Global</th>
+      </tr>
+    </thead>
+    <tbody id="global-body">
+      <tr>
+        <td id="global-cost" ></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+</html>

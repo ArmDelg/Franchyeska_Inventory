@@ -1,0 +1,260 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 20px;
+  background-color: #f9e7e7;
+  color: #333333;
+}
+
+h1 {
+  text-align: center;
+  color: #8c1d1d;
+  margin-top: 0;
+}
+
+label {
+  font-weight: bold;
+  color: #8c1d1d;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  height: 40px;
+  margin: 10px 0;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #8c1d1d;
+  font-size: 16px;
+  color: #333333;
+}
+
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background-color: #8c1d1d;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#results {
+  margin-top: 20px;
+  background-color: #ffffff;
+  border: 1px solid #8c1d1d;
+  padding: 10px;
+  color: #333333;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+#inventory-table {
+  margin: 30px auto;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.print-table #inventory-table {
+  top: 150px;
+}
+
+#inventory-table th,
+#inventory-table td {
+  padding: 10px;
+  border: 1px solid #8c1d1d;
+}
+
+#inventory-table tbody tr {
+  page-break-inside: avoid;
+}
+
+#inventory-table th {
+  background-color: #8c1d1d;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+#inventory-table td {
+  text-align: center;
+}
+
+#inventory-table tbody tr:nth-child(even) {
+  background-color: #fad3d5;
+}
+
+#inventory-table tbody tr:hover {
+  background-color: #fbb4b8;
+}
+
+/* Colores de la empresa */
+body.dark-mode {
+  color: #ffffff;
+  background-color: #333333;
+}
+
+h1.dark-mode,
+label.dark-mode,
+input[type="text"].dark-mode,
+select.dark-mode,
+button.dark-mode,
+#results.dark-mode,
+#inventory-table.dark-mode th,
+#inventory-table.dark-mode td {
+  color: #ffffff;
+}
+
+input[type="text"].dark-mode,
+select.dark-mode,
+button.dark-mode,
+#results.dark-mode,
+#inventory-table.dark-mode {
+  background-color: #555555;
+  border-color: #555555;
+}
+
+#inventory-table.dark-mode th {
+  background-color: #555555;
+}
+
+/* Estilos específicos para pantallas más pequeñas */
+@media (max-width: 600px) {
+  input[type="text"],
+  select {
+    width: 100%;
+  }
+
+  #inventory-table {
+    font-size: 12px;
+  }
+
+  #inventory-table th,
+  #inventory-table td {
+    padding: 6px;
+  }
+}
+
+@media (max-width: 700px) {
+  .menu,
+  .execute-button,
+  #results {
+    display: none !important;
+  }
+}
+
+label {
+  display: block;
+}
+
+.menu-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.menu {
+  margin-bottom: 10px;
+}
+
+#opcion {
+  width: 30%;
+}
+
+#global-table {
+  display: inline-block;
+  border-collapse: collapse;
+  font-size: 14px;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+#global-table th,
+#global-table td {
+  padding: 6px;
+  text-align: left;
+  border: 1px solid #8c1d1d;
+  font-size: 12px;
+}
+
+#global-table th {
+  background-color: #ad4545;
+  color: #ffffff;
+}
+
+#global-table tr:nth-child(even) {
+  background-color: #f5c1c1;
+}
+
+#global-table tr:hover {
+  background-color: #ed9898;
+}
+
+#global-table td.total {
+  background-color: #ffa500;
+  font-weight: bold;
+}
+
+
+#global-table.small-table {
+  max-width: max-content;
+  margin-top: 20px;
+}
+
+#global-table th,
+#global-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #8c1d1d;
+}
+
+#global-table th {
+  background-color: #ad4545;
+  color: #ffffff;
+}
+
+#global-table tr:nth-child(even) {
+  background-color: #f5c1c1;
+}
+
+#global-table tr:hover {
+  background-color: #ed9898;
+}
+
+#global-table td.total {
+  background-color: #ffa500;
+  font-weight: bold;
+}
+
+
+
+.container {
+  position: relative;
+}
+
+.costs-container {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+}
+
+.print-table {
+  position: relative;
+  page-break-after: always;
+}
+
+@media print {
+  #global-table {
+    font-size: 12px;
+    max-width: none;
+  }
+
+  #global-table th,
+  #global-table td {
+    padding: 6px;
+    font-size: 10px;
+  }
+}
+

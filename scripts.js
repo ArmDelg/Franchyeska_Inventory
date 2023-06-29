@@ -241,9 +241,7 @@ function agregarCantidadProducto() {
   // Actualizar la cantidad y entrada del producto
   productoEncontrado.cantidad += cantidad;
   productoEncontrado.entrada += cantidad;
-
-  // Calcular el costo total del producto
-  productoEncontrado.costoTotal = productoEncontrado.cantidad * productoEncontrado.precioCosto;
+  productoEncontrado.costoTotal += productoEncontrado.precioCosto * cantidad; // Multiplicar el precio costo por la cantidad agregada
 
   // Guardar el inventario actualizado en el almacenamiento local
   guardarInventarioEnLocal();
@@ -251,7 +249,6 @@ function agregarCantidadProducto() {
   mostrarMensaje("Existencias agregadas correctamente.");
   mostrarInventarioCompleto();
 }
-
 
 
 function buscarProductoPorNombre(nombre) {
@@ -296,11 +293,11 @@ function mostrarProductosEncontrados(productos) {
     row.appendChild(precioCostoCell);
 
     var entradasCell = document.createElement("td");
-    entradasCell.textContent = producto.entrada; // Corregido a producto.entrada
+    entradasCell.textContent = producto.entradas;
     row.appendChild(entradasCell);
 
     var salidasCell = document.createElement("td");
-    salidasCell.textContent = producto.salida;
+    salidasCell.textContent = producto.salidas;
     row.appendChild(salidasCell);
 
     var cantidadCell = document.createElement("td");
@@ -324,7 +321,6 @@ function mostrarProductosEncontrados(productos) {
     globalcostCell.textContent = "";
   }
 }
-
 
 
 function mostrarMensaje(mensaje) {

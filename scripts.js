@@ -161,9 +161,9 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
 
 function mostrarInventarioCompleto() {
   var inventoryBody = document.getElementById("inventory-body");
-  var globalcostCell = document.getElementById("global-cost");
+  var globalCostCell = document.getElementById("global-cost");
   inventoryBody.innerHTML = "";
-  
+
   var totalCosto = 0;
 
   for (var i = 0; i < inventario.length; i++) {
@@ -202,15 +202,14 @@ function mostrarInventarioCompleto() {
     row.appendChild(costoTotalCell);
 
     inventoryBody.appendChild(row);
-    
-    // Calcular el costo total del producto actual y sumarlo al totalCosto
+
     var costoTotalProducto = parseFloat(inventario[i].costoTotal);
     totalCosto += costoTotalProducto;
   }
-  
-  // Mostrar el costo total en la celda globalcostCell
-  globalcostCell.textContent = totalCosto.toFixed(2);
+
+  globalCostCell.textContent = totalCosto.toFixed(2);
 }
+
 
 function agregarCantidadProducto() {
   var codigo = prompt("Ingrese el código del producto:");
@@ -241,7 +240,10 @@ function agregarCantidadProducto() {
 
   // Actualizar la cantidad y entrada del producto
   productoEncontrado.cantidad += cantidad;
-  productoEncontrado.entrada += cantidad; // <-- Corregido a productoEncontrado.entrada
+  productoEncontrado.entrada += cantidad;
+
+  // Calcular el costo total del producto
+  productoEncontrado.costoTotal = productoEncontrado.cantidad * productoEncontrado.precioCosto;
 
   // Guardar el inventario actualizado en el almacenamiento local
   guardarInventarioEnLocal();
@@ -249,6 +251,8 @@ function agregarCantidadProducto() {
   mostrarMensaje("Existencias agregadas correctamente.");
   mostrarInventarioCompleto();
 }
+
+
 
 function buscarProductoPorNombre(nombre) {
   var productosEncontrados = [];
@@ -269,46 +273,59 @@ function buscarProductoPorNombre(nombre) {
 function mostrarProductosEncontrados(productos) {
   var inventoryBody = document.getElementById("inventory-body");
   inventoryBody.innerHTML = "";
+  var totalCosto = 0;
 
   for (var i = 0; i < productos.length; i++) {
     var producto = productos[i];
     var row = document.createElement("tr");
 
     var codigoCell = document.createElement("td");
-    codigoCell.textContent = inventario[i].codigo;
+    codigoCell.textContent = producto.codigo;
     row.appendChild(codigoCell);
 
     var nombreCell = document.createElement("td");
-    nombreCell.textContent = inventario[i].nombre;
+    nombreCell.textContent = producto.nombre;
     row.appendChild(nombreCell);
 
     var descripcionCell = document.createElement("td");
-    descripcionCell.textContent = inventario[i].descripcion;
+    descripcionCell.textContent = producto.descripcion;
     row.appendChild(descripcionCell);
 
     var precioCostoCell = document.createElement("td");
-    precioCostoCell.textContent = inventario[i].precioCosto;
+    precioCostoCell.textContent = producto.precioCosto;
     row.appendChild(precioCostoCell);
 
     var entradasCell = document.createElement("td");
-    entradasCell.textContent = inventario[i].entrada;
+    entradasCell.textContent = producto.entrada; // Corregido a producto.entrada
     row.appendChild(entradasCell);
 
     var salidasCell = document.createElement("td");
-    salidasCell.textContent = inventario[i].salida;
+    salidasCell.textContent = producto.salida;
     row.appendChild(salidasCell);
 
     var cantidadCell = document.createElement("td");
-    cantidadCell.textContent = inventario[i].cantidad;
+    cantidadCell.textContent = producto.cantidad;
     row.appendChild(cantidadCell);
 
     var costoTotalCell = document.createElement("td");
-    costoTotalCell.textContent = inventario[i].costoTotal;
+    costoTotalCell.textContent = producto.costoTotal;
     row.appendChild(costoTotalCell);
 
     inventoryBody.appendChild(row);
+
+    var costoTotalProducto = parseFloat(producto.costoTotal);
+    totalCosto += costoTotalProducto;
+  }
+
+  var globalcostCell = document.getElementById("global-cost");
+  if (productos.length > 0) {
+    globalcostCell.textContent = totalCosto.toFixed(2);
+  } else {
+    globalcostCell.textContent = "";
   }
 }
+
+
 
 function mostrarMensaje(mensaje) {
   var resultsDiv = document.getElementById("results");

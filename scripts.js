@@ -92,8 +92,8 @@ function agregarProducto() {
     precioCosto: precioCosto,
     cantidad: cantidad,
     costoTotal: costoTotal,
-    entrada: 0,
-    salida: 0
+    entradas: 0,
+    salidas: 0
   };
 
   // Agregar el producto al inventario
@@ -119,7 +119,7 @@ function darSalidaProducto(codigo, cantidad) {
 
     if (productoEncontrado.cantidad >= cantidad) {
       productoEncontrado.cantidad -= cantidad;
-      productoEncontrado.salida += cantidad;
+      productoEncontrado.salidas += cantidad;
       guardarInventarioEnLocal();
       mostrarMensaje("Salida registrada correctamente.");
     } else {
@@ -132,32 +132,48 @@ function darSalidaProducto(codigo, cantidad) {
   mostrarInventarioCompleto();
 }
 
+
+
 function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad) {
-  var productoEncontrado = buscarProductoPorCodigo(codigo);
-  if (productoEncontrado) {
+  var productoExistente = buscarProductoPorCodigo(codigo);
+  var productoEncontrado = buscarProductoPorCodigo(nuevoCodigo);
+
+  if (productoExistente && (!productoEncontrado || productoExistente.codigo === nuevoCodigo)) {
+    // Verificar si el nuevo código ya está asignado a otro producto en el inventario
+    if (productoEncontrado && productoExistente.codigo !== nuevoCodigo) {
+      mostrarMensaje("El nuevo código ya está asignado a otro producto en el inventario.");
+      return;
+    }
+
     // Guardar las entradas y salidas actuales
-    var entradasActuales = productoEncontrado.entradas;
-    var salidasActuales = productoEncontrado.salidas;
+    var entradasActuales = productoExistente.entradas;
+    var salidasActuales = productoExistente.salidas;
 
     // Reiniciar las entradas y salidas del producto
-    productoEncontrado.entradas = 0;
-    productoEncontrado.salidas = 0;
+    productoExistente.entradas = 0;
+    productoExistente.salidas = 0;
 
     // Actualizar el código, nombre, descripción y cantidad del producto
-    productoEncontrado.codigo = nuevoCodigo;
-    productoEncontrado.nombre = nuevoNombre;
-    productoEncontrado.descripcion = nuevaDescripcion;
-    productoEncontrado.cantidad = nuevaCantidad;
+    productoExistente.codigo = nuevoCodigo;
+    productoExistente.nombre = nuevoNombre;
+    productoExistente.descripcion = nuevaDescripcion;
+    productoExistente.cantidad = nuevaCantidad;
+    
 
     // Restaurar las entradas y salidas anteriores
-    productoEncontrado.entradas = entradasActuales;
-    productoEncontrado.salidas = salidasActuales;
+    productoExistente.entradas = entradasActuales;
+    productoExistente.salidas = salidasActuales;
+
 
     guardarInventarioEnLocal();
     mostrarMensaje("Producto editado correctamente.");
     mostrarInventarioCompleto();
+  } else {
+    mostrarMensaje("No se encontró el producto o el nuevo código ya está asignado a otro producto en el inventario.");
   }
 }
+
+
 
 function mostrarInventarioCompleto() {
   var inventoryBody = document.getElementById("inventory-body");
@@ -186,11 +202,11 @@ function mostrarInventarioCompleto() {
     row.appendChild(precioCostoCell);
 
     var entradasCell = document.createElement("td");
-    entradasCell.textContent = inventario[i].entrada;
+    entradasCell.textContent = inventario[i].entradas;
     row.appendChild(entradasCell);
 
     var salidasCell = document.createElement("td");
-    salidasCell.textContent = inventario[i].salida;
+    salidasCell.textContent = inventario[i].salidas;
     row.appendChild(salidasCell);
 
     var cantidadCell = document.createElement("td");
@@ -205,11 +221,15 @@ function mostrarInventarioCompleto() {
 
     var costoTotalProducto = parseFloat(inventario[i].costoTotal);
     totalCosto += costoTotalProducto;
+    
   }
 
   globalCostCell.textContent = totalCosto.toFixed(2);
 }
 
+function actualizarCostoTotalProducto(producto) {
+  producto.costoTotal = (producto.precioCosto * producto.cantidad).toFixed(2);
+}
 
 function agregarCantidadProducto() {
   var codigo = prompt("Ingrese el código del producto:");
@@ -240,7 +260,7 @@ function agregarCantidadProducto() {
 
   // Actualizar la cantidad y entrada del producto
   productoEncontrado.cantidad += cantidad;
-  productoEncontrado.entrada += cantidad;
+  productoEncontrado.entradas += cantidad;
   productoEncontrado.costoTotal += productoEncontrado.precioCosto * cantidad; // Multiplicar el precio costo por la cantidad agregada
 
   // Guardar el inventario actualizado en el almacenamiento local
@@ -266,6 +286,25 @@ function buscarProductoPorNombre(nombre) {
     mostrarMensaje("No se encontraron productos con el nombre especificado.");
   }
 }
+
+
+function buscarProductoPorCodigo(codigo) {
+  var productoEncontrado = null;
+  for (var i = 0; i < inventario.length; i++) {
+    if (inventario[i].codigo === codigo) {
+      productoEncontrado = inventario[i];
+      break;
+    }
+  }
+  if (productoEncontrado) {
+    mostrarMensaje("Producto encontrado:<br>" + productoEncontrado.nombre + ": " + productoEncontrado.cantidad);
+  } else {
+    mostrarMensaje("Producto no encontrado.");
+  }
+  return productoEncontrado;
+  mostrarInventarioCompleto();
+}
+
 
 function mostrarProductosEncontrados(productos) {
   var inventoryBody = document.getElementById("inventory-body");

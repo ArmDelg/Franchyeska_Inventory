@@ -14,7 +14,8 @@ function ejecutarOpcion() {
     var nuevoNombre = prompt("Ingrese el nuevo nombre del producto:");
     var nuevaDescripcion = prompt("Ingrese la nueva descripción del producto:");
     var nuevaCantidad = parseInt(prompt("Ingrese la nueva cantidad del producto:"));
-    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad);
+    var nuevoPrecioCosto = parseFloat(prompt("Ingrese el nuevo precio costo del producto:"));
+    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto);
   } else if (opcion === "3") {
     var codigo = prompt("Ingrese el código del producto:");
     var cantidad = parseInt(prompt("Ingrese la cantidad a dar salida:"));
@@ -132,9 +133,7 @@ function darSalidaProducto(codigo, cantidad) {
   mostrarInventarioCompleto();
 }
 
-
-
-function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad) {
+function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto) {
   var productoExistente = buscarProductoPorCodigo(codigo);
   var productoEncontrado = buscarProductoPorCodigo(nuevoCodigo);
 
@@ -153,17 +152,19 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     productoExistente.entradas = 0;
     productoExistente.salidas = 0;
 
-    // Actualizar el código, nombre, descripción y cantidad del producto
+    // Actualizar el código, nombre, descripción, cantidad y precio costo del producto
     productoExistente.codigo = nuevoCodigo;
     productoExistente.nombre = nuevoNombre;
     productoExistente.descripcion = nuevaDescripcion;
     productoExistente.cantidad = nuevaCantidad;
-    
+    productoExistente.precioCosto = nuevoPrecioCosto;
+
+    // Recalcular el costo total del producto
+    productoExistente.costoTotal = nuevoPrecioCosto * nuevaCantidad;
 
     // Restaurar las entradas y salidas anteriores
     productoExistente.entradas = entradasActuales;
     productoExistente.salidas = salidasActuales;
-
 
     guardarInventarioEnLocal();
     mostrarMensaje("Producto editado correctamente.");
@@ -172,8 +173,6 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     mostrarMensaje("No se encontró el producto o el nuevo código ya está asignado a otro producto en el inventario.");
   }
 }
-
-
 
 function mostrarInventarioCompleto() {
   var inventoryBody = document.getElementById("inventory-body");

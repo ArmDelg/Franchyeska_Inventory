@@ -15,12 +15,13 @@ function ejecutarOpcion() {
     var nuevaDescripcion = prompt("Ingrese la nueva descripción del producto:");
     var nuevaCantidad = parseInt(prompt("Ingrese la nueva cantidad del producto:"));
     var nuevoPrecioCosto = parseFloat(prompt("Ingrese el nuevo precio costo del producto:"));
-    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto);
+    var nuevaSucursal = prompt("Ingrese el nuevo código de la sucursal:");
+    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto, nuevaSucursal);
   } else if (opcion === "3") {
     var codigo = prompt("Ingrese el código del producto:");
     var cantidad = parseInt(prompt("Ingrese la cantidad a dar salida:"));
     darSalidaProducto(codigo, cantidad);
-  }else if (opcion === "4") {
+  } else if (opcion === "4") {
     var codigo = prompt("Ingrese el código del producto a eliminar:");
     var nombre = prompt("Ingrese el nombre del producto a eliminar:");
     eliminarProducto(codigo, nombre);
@@ -37,10 +38,15 @@ function ejecutarOpcion() {
     generarPDF();
   } else if (opcion === "10") {
     limpiarInventario();
+  } else if (opcion === "11") {
+    agregarASucursal();
+  } else if (opcion === "12") {
+    buscarPorSucursal();
   } else {
     resultsDiv.innerHTML = "Seleccione una opción válida.";
   }
 }
+
 function agregarProducto() {
   var codigo = prompt("Ingrese el código del producto:");
   if (codigo === null) {
@@ -133,7 +139,7 @@ function darSalidaProducto(codigo, cantidad) {
   mostrarInventarioCompleto();
 }
 
-function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto) {
+function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto, nuevaSucursal) {
   var productoExistente = buscarProductoPorCodigo(codigo);
   var productoEncontrado = buscarProductoPorCodigo(nuevoCodigo);
 
@@ -152,12 +158,13 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     productoExistente.entradas = 0;
     productoExistente.salidas = 0;
 
-    // Actualizar el código, nombre, descripción, cantidad y precio costo del producto
+    // Actualizar el código, nombre, descripción, cantidad, precio costo y sucursal del producto
     productoExistente.codigo = nuevoCodigo;
     productoExistente.nombre = nuevoNombre;
     productoExistente.descripcion = nuevaDescripcion;
     productoExistente.cantidad = nuevaCantidad;
     productoExistente.precioCosto = nuevoPrecioCosto;
+    productoExistente.sucursal = nuevaSucursal;
 
     // Recalcular el costo total del producto
     productoExistente.costoTotal = nuevoPrecioCosto * nuevaCantidad;
@@ -173,6 +180,7 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     mostrarMensaje("No se encontró el producto o el nuevo código ya está asignado a otro producto en el inventario.");
   }
 }
+
 
 function mostrarInventarioCompleto() {
   var inventoryBody = document.getElementById("inventory-body");
@@ -216,15 +224,20 @@ function mostrarInventarioCompleto() {
     costoTotalCell.textContent = inventario[i].costoTotal;
     row.appendChild(costoTotalCell);
 
+    // Agregar la casilla "Sucursal"
+    var sucursalCell = document.createElement("td");
+    sucursalCell.textContent = inventario[i].sucursal;
+    row.appendChild(sucursalCell);
+
     inventoryBody.appendChild(row);
 
     var costoTotalProducto = parseFloat(inventario[i].costoTotal);
     totalCosto += costoTotalProducto;
-    
   }
 
   globalCostCell.textContent = totalCosto.toFixed(2);
 }
+
 
 function actualizarCostoTotalProducto(producto) {
   producto.costoTotal = (producto.precioCosto * producto.cantidad).toFixed(2);
@@ -346,6 +359,11 @@ function mostrarProductosEncontrados(productos) {
     costoTotalCell.textContent = producto.costoTotal;
     row.appendChild(costoTotalCell);
 
+    // Agregar la casilla "Sucursal"
+    var sucursalCell = document.createElement("td");
+    sucursalCell.textContent = inventario[i].sucursal;
+    row.appendChild(sucursalCell);
+
     inventoryBody.appendChild(row);
 
     var costoTotalProducto = parseFloat(producto.costoTotal);
@@ -431,3 +449,103 @@ function eliminarProducto(codigo, nombre) {
     mostrarMensaje("No se encontró un producto con el código y nombre especificados.");
   }
 }
+
+
+var sucursalesPermitidas = ["TLMB11", "TLMB13", "KATINKA", "FIXMI"];
+
+function agregarASucursal() {
+  var codigoProducto = prompt("Ingrese el código del producto:");
+  var nombreProducto = prompt("Ingrese el nombre del producto:");
+  var codigoSucursal = prompt("Ingrese el código de la sucursal:");
+
+  // Verificar si el código de sucursal está permitido
+  if (sucursalesPermitidas.includes(codigoSucursal)) {
+    // Buscar el producto en el inventario
+    var productoEncontrado = inventario.find(function(producto) {
+      return producto.codigo === codigoProducto && producto.nombre === nombreProducto;
+    });
+
+    if (productoEncontrado) {
+      productoEncontrado.sucursal = codigoSucursal;
+      console.log(`El producto "${nombreProducto}" se ha agregado a la sucursal "${codigoSucursal}"`);
+      mostrarInventarioCompleto(); // Llamar a la función para mostrar el inventario completo
+    } else {
+      console.log("Error: Producto no encontrado en el inventario.");
+    }
+  } else {
+    console.log("Error: Código de sucursal no válido. Ingrese un código válido.");
+  }
+
+  guardarInventarioEnLocal();
+
+}
+
+function buscarPorSucursal() {
+  var codigoSucursal = prompt("Ingrese el código de la sucursal:");
+
+  // Verificar si el código de sucursal está permitido
+  if (sucursalesPermitidas.includes(codigoSucursal)) {
+    // Filtrar el inventario por el código de la sucursal
+    var inventarioFiltrado = inventario.filter(function(producto) {
+      return producto.sucursal === codigoSucursal;
+    });
+
+    // Mostrar el inventario filtrado por sucursal
+    var inventoryBody = document.getElementById("inventory-body");
+    var globalCostCell = document.getElementById("global-cost");
+    inventoryBody.innerHTML = "";
+
+    var totalCosto = 0;
+
+    for (var i = 0; i < inventarioFiltrado.length; i++) {
+      var row = document.createElement("tr");
+
+      var codigoCell = document.createElement("td");
+      codigoCell.textContent = inventarioFiltrado[i].codigo;
+      row.appendChild(codigoCell);
+
+      var nombreCell = document.createElement("td");
+      nombreCell.textContent = inventarioFiltrado[i].nombre;
+      row.appendChild(nombreCell);
+
+      var descripcionCell = document.createElement("td");
+      descripcionCell.textContent = inventarioFiltrado[i].descripcion;
+      row.appendChild(descripcionCell);
+
+      var precioCostoCell = document.createElement("td");
+      precioCostoCell.textContent = inventarioFiltrado[i].precioCosto;
+      row.appendChild(precioCostoCell);
+
+      var entradasCell = document.createElement("td");
+      entradasCell.textContent = inventarioFiltrado[i].entradas;
+      row.appendChild(entradasCell);
+
+      var salidasCell = document.createElement("td");
+      salidasCell.textContent = inventarioFiltrado[i].salidas;
+      row.appendChild(salidasCell);
+
+      var cantidadCell = document.createElement("td");
+      cantidadCell.textContent = inventarioFiltrado[i].cantidad;
+      row.appendChild(cantidadCell);
+
+      var costoTotalCell = document.createElement("td");
+      costoTotalCell.textContent = inventarioFiltrado[i].costoTotal;
+      row.appendChild(costoTotalCell);
+
+      var sucursalCell = document.createElement("td");
+      sucursalCell.textContent = inventarioFiltrado[i].sucursal;
+      row.appendChild(sucursalCell);
+
+      inventoryBody.appendChild(row);
+
+      var costoTotalProducto = parseFloat(inventarioFiltrado[i].costoTotal);
+      totalCosto += costoTotalProducto;
+    }
+
+    globalCostCell.textContent = totalCosto.toFixed(2);
+  } else {
+    console.log("Error: Código de sucursal no válido. Ingrese un código válido.");
+  }
+}
+
+

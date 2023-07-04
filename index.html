@@ -20,10 +20,13 @@
       <option value="8">Imprimir tabla</option>
       <option value="9">Generar PDF</option>
       <option value="10">Limpiar Inventario</option>
+      <option value="11">Agregar a Sucursal</option>
+      <option value="12">Buscar Por Sucursal</option>
     </select>
     <button onclick="ejecutarOpcion()">Ejecutar</button>
   </div>
   <div id="results"></div>
+  
 
   <table id="inventory-table" class="print-table">
     <thead>
@@ -36,6 +39,7 @@
         <th>Salidas</th>
         <th>Cantidad</th>
         <th>Costo Total</th>
+        <th>Sucursal</th>
       </tr>
     </thead>
     <tbody id="inventory-body"></tbody>

@@ -169,10 +169,6 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     // Recalcular el costo total del producto
     productoExistente.costoTotal = nuevoPrecioCosto * nuevaCantidad;
 
-    // Restaurar las entradas y salidas anteriores
-    productoExistente.entradas = entradasActuales;
-    productoExistente.salidas = salidasActuales;
-
     guardarInventarioEnLocal();
     mostrarMensaje("Producto editado correctamente.");
     mostrarInventarioCompleto();

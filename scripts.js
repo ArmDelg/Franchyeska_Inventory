@@ -449,10 +449,12 @@ function eliminarProducto(codigo, nombre) {
 
 var sucursalesPermitidas = ["TLMB11", "TLMB13", "KATINKA", "FIXMI"];
 
+// Crear una nueva función para agregar el producto a una sucursal
 function agregarASucursal() {
   var codigoProducto = prompt("Ingrese el código del producto:");
   var nombreProducto = prompt("Ingrese el nombre del producto:");
   var codigoSucursal = prompt("Ingrese el código de la sucursal:");
+  var cantidadUnidades = parseInt(prompt("Ingrese la cantidad de unidades a guardar en la sucursal:"));
 
   // Verificar si el código de sucursal está permitido
   if (sucursalesPermitidas.includes(codigoSucursal)) {
@@ -463,7 +465,10 @@ function agregarASucursal() {
 
     if (productoEncontrado) {
       productoEncontrado.sucursal = codigoSucursal;
-      console.log(`El producto "${nombreProducto}" se ha agregado a la sucursal "${codigoSucursal}"`);
+      // Sumar la cantidad ingresada a la cantidad existente en la sucursal
+      productoEncontrado[codigoSucursal] = (productoEncontrado[codigoSucursal] || 0) + cantidadUnidades;
+
+      console.log(`Se han agregado ${cantidadUnidades} unidades del producto "${nombreProducto}" a la sucursal "${codigoSucursal}".`);
       mostrarInventarioCompleto(); // Llamar a la función para mostrar el inventario completo
     } else {
       console.log("Error: Producto no encontrado en el inventario.");
@@ -473,7 +478,6 @@ function agregarASucursal() {
   }
 
   guardarInventarioEnLocal();
-
 }
 
 function buscarPorSucursal() {
@@ -521,7 +525,8 @@ function buscarPorSucursal() {
       row.appendChild(salidasCell);
 
       var cantidadCell = document.createElement("td");
-      cantidadCell.textContent = inventarioFiltrado[i].cantidad;
+      var cantidadEspecifica = inventarioFiltrado[i][codigoSucursal];
+      cantidadCell.textContent = cantidadEspecifica;
       row.appendChild(cantidadCell);
 
       var costoTotalCell = document.createElement("td");

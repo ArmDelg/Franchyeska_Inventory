@@ -1,6 +1,8 @@
 // Cargar los datos del inventario desde el almacenamiento local
 var inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
+verificarCasillasEnBlanco();
+
 
 function ejecutarOpcion() {
   var opcion = document.getElementById("opcion").value;
@@ -671,7 +673,7 @@ function verificarCasillasEnBlanco() {
   for (var i = 0; i < inventario.length; i++) {
     var producto = inventario[i];
 
-    if (producto.codigo === "" || producto.nombre === "" || producto.descripcion === "") {
+    if (producto.codigo === "" || producto.nombre === "") {
       inventario.splice(i, 1);
       productosEliminados++;
       i--; // Ajustar el índice después de eliminar un elemento
@@ -680,8 +682,9 @@ function verificarCasillasEnBlanco() {
 
   if (productosEliminados > 0) {
     guardarInventarioEnLocal();
-    mostrarMensaje(`Se han eliminado ${productosEliminados} productos con casillas en blanco.`);
+    mostrarMensaje(`Se han eliminado ${productosEliminados} productos sin código o nombre.`);
   }
 }
+
 
 

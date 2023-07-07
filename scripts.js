@@ -1,8 +1,6 @@
 // Cargar los datos del inventario desde el almacenamiento local
 var inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
-verificarCasillasEnBlanco();
-
 
 function ejecutarOpcion() {
   var opcion = document.getElementById("opcion").value;

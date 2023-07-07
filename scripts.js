@@ -159,7 +159,12 @@ function darSalidaProducto(codigo, cantidad) {
 
 
 function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto, nuevaSucursal) {
-  if (!nuevoCodigo || !nuevoNombre || !nuevaDescripcion || isNaN(nuevaCantidad) || isNaN(nuevoPrecioCosto) || !nuevaSucursal) {
+  if (!confirm("¿Desea editar el producto?")) {
+    mostrarMensaje("Edición cancelada.");
+    return;
+  }
+
+  if (!nuevoCodigo || !nuevoNombre || !nuevaDescripcion || isNaN(nuevaCantidad) || isNaN(nuevoPrecioCosto)) {
     mostrarMensaje("Edición cancelada. No se han proporcionado todos los datos necesarios.");
     return;
   }
@@ -188,7 +193,7 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     productoExistente.descripcion = nuevaDescripcion;
     productoExistente.cantidad = nuevaCantidad;
     productoExistente.precioCosto = nuevoPrecioCosto;
-    productoExistente.sucursal = nuevaSucursal;
+    productoExistente.sucursal = nuevaSucursal || "";
 
     // Recalcular el costo total del producto
     productoExistente.costoTotal = nuevoPrecioCosto * nuevaCantidad;
@@ -200,7 +205,6 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     mostrarMensaje("No se encontró el producto o el nuevo código ya está asignado a otro producto en el inventario.");
   }
 }
-
 
 
 
@@ -480,49 +484,32 @@ function agregarASucursal() {
   var codigoProducto = prompt("Ingrese el código del producto:");
   var nombreProducto = prompt("Ingrese el nombre del producto:");
   var codigoSucursal = prompt("Ingrese el código de la sucursal:");
-  var cantidad = parseInt(prompt("Ingrese la cantidad a enviar a la sucursal:"));
+  var cantidadUnidades = parseInt(prompt("Ingrese la cantidad de unidades a guardar en la sucursal:"));
 
   // Verificar si el código de sucursal está permitido
   if (sucursalesPermitidas.includes(codigoSucursal)) {
-    // Buscar el producto en el inventario general
-    var productoEnInventario = inventario.find(function(producto) {
+    // Buscar el producto en el inventario
+    var productoEncontrado = inventario.find(function(producto) {
       return producto.codigo === codigoProducto && producto.nombre === nombreProducto;
     });
 
-    if (productoEnInventario) {
-      // Actualizar las entradas del inventario general
-      productoEnInventario.entradas += cantidad;
+    if (productoEncontrado) {
+      productoEncontrado.sucursal = codigoSucursal;
+      // Sumar la cantidad ingresada a la cantidad existente en la sucursal
+      productoEncontrado[codigoSucursal] = (productoEncontrado[codigoSucursal] || 0) + cantidadUnidades;
 
-      // Verificar si el producto ya existe en la sucursal
-      var productoEnSucursal = inventario.find(function(producto) {
-        return producto.sucursal === codigoSucursal && producto.codigo === codigoProducto && producto.nombre === nombreProducto;
-      });
-
-      if (productoEnSucursal) {
-        // Actualizar las entradas del inventario de la sucursal
-        productoEnSucursal[codigoSucursal] += cantidad;
-      } else {
-        // Crear un nuevo objeto de producto para la sucursal
-        var nuevoProductoSucursal = {
-          codigo: codigoProducto,
-          nombre: nombreProducto,
-          sucursal: codigoSucursal
-        };
-        nuevoProductoSucursal[codigoSucursal] = cantidad;
-        inventario.push(nuevoProductoSucursal);
-      }
-
-      guardarInventarioEnLocal();
-      mostrarMensaje(`Se han enviado ${cantidad} unidades del producto "${nombreProducto}" a la sucursal "${codigoSucursal}".`);
+      console.log(`Se han agregado ${cantidadUnidades} unidades del producto "${nombreProducto}" a la sucursal "${codigoSucursal}".`);
+      mostrarInventarioCompleto(); // Llamar a la función para mostrar el inventario completo
     } else {
-      mostrarMensaje("Error: Producto no encontrado en el inventario.");
+      console.log("Error: Producto no encontrado en el inventario.");
     }
   } else {
-    mostrarMensaje("Error: Código de sucursal no válido. Ingrese un código válido.");
+    console.log("Error: Código de sucursal no válido. Ingrese un código válido.");
   }
 
-  mostrarInventarioCompleto();
+  guardarInventarioEnLocal();
 }
+
 
 function buscarPorSucursal() {
   var codigoSucursal = prompt("Ingrese el código de la sucursal:");
@@ -595,6 +582,7 @@ function buscarPorSucursal() {
 }
 
 
+
 function darSalidaDesdeSucursal() {
   var codigoSucursal = prompt("Ingrese el código de la sucursal desde donde dará salida al producto:");
   var codigoProducto = prompt("Ingrese el código del producto:");
@@ -640,6 +628,7 @@ function darSalidaDesdeSucursal() {
   mostrarInventarioCompleto();
 }
 
+
 function calcularCostoTotalGlobal() {
   var costoTotalGlobal = 0;
 
@@ -662,5 +651,6 @@ function despejarInventario() {
   mostrarMensaje("Se han eliminado los productos sin código.");
   mostrarInventarioCompleto();
 }
+
 
 

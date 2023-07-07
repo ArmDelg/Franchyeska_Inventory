@@ -1,6 +1,9 @@
 // Cargar los datos del inventario desde el almacenamiento local
 var inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
+verificarCasillasEnBlanco();
+
+
 function ejecutarOpcion() {
   var opcion = document.getElementById("opcion").value;
   var resultsDiv = document.getElementById("results");
@@ -246,8 +249,10 @@ function mostrarInventarioCompleto() {
     cantidadCell.textContent = inventario[i].cantidad;
     row.appendChild(cantidadCell);
 
+    // Calcular el costo total
+    var costoTotal = parseFloat(inventario[i].precioCosto) * parseFloat(inventario[i].cantidad);
     var costoTotalCell = document.createElement("td");
-    costoTotalCell.textContent = inventario[i].costoTotal;
+    costoTotalCell.textContent = (isNaN(costoTotal) ? "" : costoTotal.toFixed(2));
     row.appendChild(costoTotalCell);
 
     // Agregar la casilla "Sucursal"
@@ -257,17 +262,25 @@ function mostrarInventarioCompleto() {
 
     inventoryBody.appendChild(row);
 
-    var costoTotalProducto = parseFloat(inventario[i].costoTotal);
-    totalCosto += costoTotalProducto;
+    // Sumar el costo total al costo total global
+    if (!isNaN(costoTotal)) {
+      totalCosto += costoTotal;
+    }
   }
 
   globalCostCell.textContent = totalCosto.toFixed(2);
 }
 
 
-function actualizarCostoTotalProducto(producto) {
-  producto.costoTotal = (producto.precioCosto * producto.cantidad).toFixed(2);
+
+function calcularCostoTotalProducto(producto) {
+  if (producto.cantidad === 0) {
+    producto.costoTotal = "0.00";
+  } else {
+    producto.costoTotal = (producto.cantidad * producto.precioCosto).toFixed(2);
+  }
 }
+
 
 function agregarCantidadProducto() {
   var codigo = prompt("Ingrese el código del producto:");
@@ -561,7 +574,8 @@ function buscarPorSucursal() {
       row.appendChild(cantidadCell);
 
       var costoTotalCell = document.createElement("td");
-      var costoTotalEspecifico = (inventarioFiltrado[i].precioCosto * cantidadEspecifica).toFixed(2);
+      var precioCostoEspecifico = parseFloat(inventarioFiltrado[i].precioCosto);
+      var costoTotalEspecifico = isNaN(precioCostoEspecifico) || cantidadEspecifica === 0 ? "" : (precioCostoEspecifico * cantidadEspecifica).toFixed(2);
       costoTotalCell.textContent = costoTotalEspecifico;
       row.appendChild(costoTotalCell);
 
@@ -572,7 +586,9 @@ function buscarPorSucursal() {
       inventoryBody.appendChild(row);
 
       var costoTotalProducto = parseFloat(costoTotalEspecifico);
-      totalCosto += costoTotalProducto;
+      if (!isNaN(costoTotalProducto)) {
+        totalCosto += costoTotalProducto;
+      }
     }
 
     globalCostCell.textContent = totalCosto.toFixed(2);
@@ -580,8 +596,6 @@ function buscarPorSucursal() {
     console.log("Error: Código de sucursal no válido. Ingrese un código válido.");
   }
 }
-
-
 
 function darSalidaDesdeSucursal() {
   var codigoSucursal = prompt("Ingrese el código de la sucursal desde donde dará salida al producto:");
@@ -630,16 +644,17 @@ function darSalidaDesdeSucursal() {
 
 
 function calcularCostoTotalGlobal() {
-  var costoTotalGlobal = 0;
+  var totalCosto = 0;
 
   for (var i = 0; i < inventario.length; i++) {
-    var producto = inventario[i];
-    var costoTotalProducto = producto.precioCosto * producto.cantidad;
-    costoTotalGlobal += costoTotalProducto;
+    if (inventario[i].precioCosto) { // Verificar si el producto tiene un precio costo asignado
+      totalCosto += parseFloat(inventario[i].costoTotal);
+    }
   }
 
-  return costoTotalGlobal.toFixed(2);
+  return totalCosto.toFixed(2);
 }
+
 
 function despejarInventario() {
   var inventarioFiltrado = inventario.filter(function(producto) {
@@ -652,5 +667,23 @@ function despejarInventario() {
   mostrarInventarioCompleto();
 }
 
+function verificarCasillasEnBlanco() {
+  var productosEliminados = 0;
+
+  for (var i = 0; i < inventario.length; i++) {
+    var producto = inventario[i];
+
+    if (producto.codigo === "" || producto.nombre === "" || producto.descripcion === "") {
+      inventario.splice(i, 1);
+      productosEliminados++;
+      i--; // Ajustar el índice después de eliminar un elemento
+    }
+  }
+
+  if (productosEliminados > 0) {
+    guardarInventarioEnLocal();
+    mostrarMensaje(`Se han eliminado ${productosEliminados} productos con casillas en blanco.`);
+  }
+}
 
 

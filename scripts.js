@@ -18,8 +18,7 @@ function ejecutarOpcion() {
     var nuevaDescripcion = prompt("Ingrese la nueva descripción del producto:");
     var nuevaCantidad = parseInt(prompt("Ingrese la nueva cantidad del producto:"));
     var nuevoPrecioCosto = parseFloat(prompt("Ingrese el nuevo precio costo del producto:"));
-    var nuevaSucursal = prompt("Ingrese el nuevo código de la sucursal:");
-    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto, nuevaSucursal);
+    editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto);
   } else if (opcion === "3") {
     var codigo = prompt("Ingrese el código del producto:");
     var cantidad = parseInt(prompt("Ingrese la cantidad a dar salida:"));
@@ -47,8 +46,6 @@ function ejecutarOpcion() {
     buscarPorSucursal();
   } else if (opcion === "13") {
     darSalidaDesdeSucursal();
-  } else if (opcion === "14") {
-    despejarInventario();
   } else {
     resultsDiv.innerHTML = "Seleccione una opción válida.";
   }
@@ -161,7 +158,7 @@ function darSalidaProducto(codigo, cantidad) {
 
 
 
-function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto, nuevaSucursal) {
+function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuevaCantidad, nuevoPrecioCosto) {
   if (!confirm("¿Desea editar el producto?")) {
     mostrarMensaje("Edición cancelada.");
     return;
@@ -196,7 +193,6 @@ function editarProducto(codigo, nuevoCodigo, nuevoNombre, nuevaDescripcion, nuev
     productoExistente.descripcion = nuevaDescripcion;
     productoExistente.cantidad = nuevaCantidad;
     productoExistente.precioCosto = nuevoPrecioCosto;
-    productoExistente.sucursal = nuevaSucursal || "";
 
     // Recalcular el costo total del producto
     productoExistente.costoTotal = nuevoPrecioCosto * nuevaCantidad;

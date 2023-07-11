@@ -258,3 +258,45 @@ label {
   }
 }
 
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.units-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+#units-table {
+  display: inline-block;
+  border-collapse: collapse;
+  font-size: 14px;
+  max-width: 300px;
+  margin-top: 20px;
+  vertical-align: top;
+}
+
+#units-table th,
+#units-table td {
+  padding: 6px;
+  text-align: left;
+  border: 1px solid #8c1d1d;
+  font-size: 12px;
+}
+
+#units-table th {
+  background-color: #ad4545;
+  color: #ffffff;
+}
+
+#units-table tr:nth-child(even) {
+  background-color: #f5c1c1;
+}
+
+#units-table tr:hover {
+  background-color: #ed9898;
+}
+
+

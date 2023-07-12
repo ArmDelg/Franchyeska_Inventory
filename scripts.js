@@ -217,7 +217,6 @@ function mostrarInventarioCompleto() {
   var totalCosto = 0;
   var totalUnits = 0;
 
-
   for (var i = 0; i < inventario.length; i++) {
     var row = document.createElement("tr");
 
@@ -249,35 +248,35 @@ function mostrarInventarioCompleto() {
     cantidadCell.textContent = inventario[i].cantidad;
     row.appendChild(cantidadCell);
 
-    // Calcular el costo total
-    var costoTotal = parseFloat(inventario[i].precioCosto) * parseFloat(inventario[i].cantidad);
-    var costoTotalCell = document.createElement("td");
-    costoTotalCell.textContent = (isNaN(costoTotal) ? "" : costoTotal.toFixed(2));
-    row.appendChild(costoTotalCell);
+    var cantidad = parseFloat(inventario[i].cantidad);
 
-    // Agregar la casilla "Sucursal"
+    if (!isNaN(cantidad)) {
+      // Calcular el costo total
+      var costoTotal = parseFloat(inventario[i].precioCosto) * cantidad;
+      var costoTotalCell = document.createElement("td");
+      costoTotalCell.textContent = isNaN(costoTotal) ? "" : costoTotal.toFixed(2);
+      row.appendChild(costoTotalCell);
+
+      // Sumar el costo total al costo total global
+      if (!isNaN(costoTotal)) {
+        totalCosto += costoTotal;
+      }
+
+      // Sumar las unidades al contador de unidades
+      totalUnits += cantidad;
+    }
+
     var sucursalCell = document.createElement("td");
     sucursalCell.textContent = inventario[i].sucursal;
     row.appendChild(sucursalCell);
 
     inventoryBody.appendChild(row);
-
-    // Sumar el costo total al costo total global
-    if (!isNaN(costoTotal)) {
-      totalCosto += costoTotal;
-    }
-
-    if (!isNaN(inventario[i].cantidad)) {
-      totalUnits += parseFloat(inventario[i].cantidad);
-    }
   }
 
-  
-
   globalCostCell.textContent = totalCosto.toFixed(2);
-  totalUnitsCell.textContent = totalUnits;
-
+  totalUnitsCell.textContent = isNaN(totalUnits) ? "" : totalUnits.toFixed(2);
 }
+
 
 
 
@@ -710,7 +709,7 @@ function verificarCasillasEnBlanco() {
   for (var i = 0; i < inventario.length; i++) {
     var producto = inventario[i];
 
-    if (producto.codigo === "" || producto.nombre === "") {
+    if (producto.codigo === null || producto.nombre === null || !/^[-a-zA-Z0-9]+$/.test(producto.codigo) || !/^[-a-zA-Z0-9]+$/.test(producto.nombre)) {
       inventario.splice(i, 1);
       productosEliminados++;
       i--; // Ajustar el índice después de eliminar un elemento
@@ -719,9 +718,11 @@ function verificarCasillasEnBlanco() {
 
   if (productosEliminados > 0) {
     guardarInventarioEnLocal();
-    mostrarMensaje(`Se han eliminado ${productosEliminados} productos sin código o nombre.`);
+    mostrarMensaje(`Se han eliminado ${productosEliminados} productos con valores nulos o caracteres inválidos en el código o nombre.`);
   }
 }
+
+
 
 
 

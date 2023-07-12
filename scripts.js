@@ -46,10 +46,15 @@ function ejecutarOpcion() {
     buscarPorSucursal();
   } else if (opcion === "13") {
     darSalidaDesdeSucursal();
+  } else if (opcion === "14") {
+    guardarRespaldoInventario();
+  } else if (opcion === "15") {
+    cargarRespaldoInventario();
   } else {
     resultsDiv.innerHTML = "Seleccione una opción válida.";
   }
 }
+
 
 
 function agregarProducto() {
@@ -723,4 +728,34 @@ function verificarCasillasEnBlanco() {
     mostrarMensaje(`Se han eliminado ${productosEliminados} productos sin código o nombre.`);
   }
 }
+
+// Función para guardar el inventario en el almacenamiento local
+function guardarRespaldoInventario() {
+  // Convierte el inventario en una cadena JSON
+  var inventarioJSON = JSON.stringify(inventario);
+  
+  // Guarda el inventario en el almacenamiento local
+  localStorage.setItem('respaldoInventario', inventarioJSON);
+  
+  mostrarMensaje('Respaldo del inventario guardado en el almacenamiento local.');
+}
+
+// Función para cargar un respaldo anterior del inventario desde el almacenamiento local
+function cargarRespaldoInventario() {
+  // Recupera el inventario del almacenamiento local
+  var inventarioJSON = localStorage.getItem('respaldoInventario');
+  
+  if (inventarioJSON) {
+    // Convierte la cadena JSON en un objeto JavaScript
+    inventario = JSON.parse(inventarioJSON);
+    
+    mostrarMensaje('Respaldo del inventario cargado desde el almacenamiento local.');
+    mostrarInventarioCompleto();
+  } else {
+    mostrarMensaje('No se encontró ningún respaldo del inventario en el almacenamiento local.');
+  }
+}
+
+
+
 

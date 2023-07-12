@@ -299,4 +299,13 @@ label {
   background-color: #ed9898;
 }
 
+#logo {
+  display: block;
+  text-align: center;
+}
+
+#logo img {
+  width: 400px; /* Ajusta el tamaño según tus necesidades */
+}
+
 

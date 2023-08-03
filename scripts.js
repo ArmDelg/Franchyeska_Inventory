@@ -557,25 +557,24 @@ function agregarASucursal() {
             return sucursal.sucursal === codigoSucursal;
           });
 
-          // Si la sucursal ya existe, verificar si la cantidad a agregar excede el inventario general
+          // Si la sucursal ya existe, actualizamos la cantidad
           if (sucursalExistente) {
-            var cantidadMaximaAgregar = productoEncontrado.cantidad - sucursalExistente.cantidad;
-            if (cantidadUnidades > cantidadMaximaAgregar) {
-              mostrarMensaje(`No puede agregar más de ${cantidadMaximaAgregar} unidades en la sucursal ${codigoSucursal}.`);
+            if (cantidadUnidades > productoEncontrado.cantidad) {
+              mostrarMensaje("Error: No se puede agregar más unidades de las disponibles en el inventario general.");
               return;
             }
             sucursalExistente.cantidad += cantidadUnidades;
+            sucursalExistente.entradas += cantidadUnidades;
           } else {
-            // Si la sucursal no existe, verificar si la cantidad a agregar excede el inventario general
+            // Si la sucursal no existe, la agregamos al producto con las cantidades
             if (cantidadUnidades > productoEncontrado.cantidad) {
-              mostrarMensaje(`No puede agregar más de ${productoEncontrado.cantidad} unidades en la sucursal ${codigoSucursal}.`);
+              mostrarMensaje("Error: No se puede agregar más unidades de las disponibles en el inventario general.");
               return;
             }
-            // Agregar la sucursal al producto
             productoEncontrado.sucursales.push({
               sucursal: codigoSucursal,
               cantidad: cantidadUnidades,
-              salidas: 0
+              entradas: cantidadUnidades
             });
           }
 
@@ -642,6 +641,7 @@ function mostrarInventarioSucursal(inventarioFiltrado, codigoSucursal) {
 
     var cantidadEnSucursal = cantidadEspecifica ? cantidadEspecifica.cantidad : 0;
     var salidasEnSucursal = cantidadEspecifica ? cantidadEspecifica.salidas : 0; // Salidas registradas en darSalidaDesdeSucursal
+    var entradasEnSucursal = cantidadEspecifica ? cantidadEspecifica.entradas : 0; // Entradas registradas en agregarASucursal
 
     var row = document.createElement("tr");
 
@@ -662,7 +662,7 @@ function mostrarInventarioSucursal(inventarioFiltrado, codigoSucursal) {
     row.appendChild(precioCostoCell);
 
     var entradasCell = document.createElement("td");
-    entradasCell.textContent = producto.entradas;
+    entradasCell.textContent = entradasEnSucursal; // Mostrar las entradas registradas en agregarASucursal
     row.appendChild(entradasCell);
 
     var salidasCell = document.createElement("td");
@@ -699,6 +699,7 @@ function mostrarInventarioSucursal(inventarioFiltrado, codigoSucursal) {
   globalCostCell.textContent = totalCosto.toFixed(2);
   totalUnitsCell.textContent = totalUnits;
 }
+
 
 function darSalidaDesdeSucursal() {
   var codigoSucursal = prompt("Ingrese el código de la sucursal desde donde dará salida al producto:");
